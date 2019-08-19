@@ -1,15 +1,19 @@
 apiVersion: v1
 kind: Service
 metadata:
-  annotations:
-    prometheus.io/scrape: 'true'
-  name: "{{  .Chart.Name }}-service"
+  name: {{ include "nodeserver.fullname" . }}
   labels:
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    app.kubernetes.io/name: {{ include "nodeserver.name" . }}
+    helm.sh/chart: {{ include "nodeserver.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   type: {{ .Values.service.type }}
   ports:
-  - name: http  
-    port: {{ .Values.service.servicePort }}
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
   selector:
-    app: "{{  .Chart.Name }}-selector"
+    app.kubernetes.io/name: {{ include "nodeserver.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
