@@ -19,6 +19,10 @@ spec:
         app.kubernetes.io/name: {{ include "nodeserver.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
+      volumes:
+        - name: {{ include "nodeserver.fullname" . }}-pv-storage
+          persistentVolumeClaim:
+            claimName: {{ include "nodeserver.fullname" . }}-pv-claim
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -27,6 +31,9 @@ spec:
             - name: http
               containerPort: 3000
               protocol: TCP
+          volumeMounts:
+            - mountPath: "/data"
+              name: {{ include "nodeserver.fullname" . }}-pv-storage
           livenessProbe:
             httpGet:
               path: /

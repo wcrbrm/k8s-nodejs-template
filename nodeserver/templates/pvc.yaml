@@ -1,0 +1,34 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ include "nodeserver.fullname" . }}-pv-volume
+  labels:
+    app.kubernetes.io/name: {{ include "nodeserver.name" . }}
+    helm.sh/chart: {{ include "nodeserver.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 10Mi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "nodeserver.fullname" . }}-pv-claim
+  labels:
+    app.kubernetes.io/name: {{ include "nodeserver.name" . }}
+    helm.sh/chart: {{ include "nodeserver.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Mi
